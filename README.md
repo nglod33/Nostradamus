@@ -1,2 +1,2 @@
 # Nostradamus
-EU4 Save Game analyzer designed to give player ratings and predict the winner of wars
+EU4 Save game analyzer that uses game data to rank players based on skill and accomplishments
