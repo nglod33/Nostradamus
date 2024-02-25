@@ -2,7 +2,9 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"path/filepath"
 )
 
 const maxUploadbytes = 10 * 1024 * 1024 // 10 MB
@@ -24,14 +26,43 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Check file type
-	if handler.Filename == "Test" {
+	// Check to see if file is below max size
+	// Seek to the end of the file
+	offset, err := file.Seek(0, io.SeekEnd)
+	if err != nil {
+		fmt.Println("Error uploading file: ", err)
+		http.Error(w, "Error uploading file", http.StatusInternalServerError)
 		return
+	}
+
+	// Get the file size (which is the current offset)
+	fileSize := offset
+	if fileSize > maxUploadbytes {
+		fmt.Println("Error uploading file, above the max size of __ bytes")
+		http.Error(w, "Error uploading file, above the max size of _ bytes", http.StatusInternalServerError)
+		return
+	}
+
+	// Reset the position back to the beginning
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		// Handle error
 	}
 
 	// Check if file is compressed, then handle
 
-	// Parse file to retrieve player information (message.txt has info on how python does this)
+	saveExtension := filepath.Ext(handler.Filename)
+
+	switch saveExtension {
+	case ".zip":
+
+	case ".eu4":
+
+	default:
+		fmt.Println("Invalid file type: ", err)
+		http.Error(w, "Invalid file Type, must me .zip or .eu4", http.StatusInternalServerError)
+		return
+	}
 
 	// Stack rank players based on information
 
